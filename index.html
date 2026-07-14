@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Piyush Kumar — Full Stack Web Developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0f1c;
+    --bg-alt:#0d1526;
+    --surface:#111b30;
+    --surface-2:#152140;
+    --border:rgba(255,255,255,0.08);
+    --border-strong:rgba(255,255,255,0.16);
+    --text:#eef2fb;
+    --muted:#8b96ac;
+    --muted-dim:#5c6680;
+    --blue:#4c8dff;
+    --blue-soft:#6ea2ff;
+    --cyan:#6fe6ff;
+    --white:#ffffff;
+    --radius:16px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    overflow-x:hidden;
+    line-height:1.6;
+  }
+  ::selection{background:var(--blue);color:#fff;}
+
+  h1,h2,h3,.display{font-family:'Space Grotesk',sans-serif;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+
+  a{color:inherit;text-decoration:none;}
+  ul{list-style:none;}
+  img{max-width:100%;display:block;}
+
+  /* Background ambience */
+  .bg-grid{
+    position:fixed;inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size:64px 64px;
+    z-index:0;
+    mask-image:radial-gradient(ellipse 80% 60% at 50% 20%, black 40%, transparent 90%);
+  }
+  .bg-glow{
+    position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(600px circle at 15% 10%, rgba(76,141,255,0.14), transparent 60%),
+      radial-gradient(500px circle at 85% 30%, rgba(111,230,255,0.10), transparent 60%);
+  }
+
+  /* Nav */
+  header{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    display:flex;justify-content:center;
+    padding-top:18px;
+    pointer-events:none;
+  }
+  nav{
+    pointer-events:all;
+    display:flex;align-items:center;gap:6px;
+    background:rgba(13,21,38,0.7);
+    backdrop-filter:blur(16px) saturate(160%);
+    -webkit-backdrop-filter:blur(16px) saturate(160%);
+    border:1px solid var(--border);
+    border-radius:100px;
+    padding:8px 8px 8px 20px;
+    box-shadow:0 8px 30px rgba(0,0,0,0.35);
+    transition:transform .3s ease;
+  }
+  .nav-brand{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600;font-size:0.95rem;
+    margin-right:18px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .nav-brand .dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan);}
+  .nav-links{display:flex;gap:2px;}
+  .nav-links a{
+    font-size:0.85rem;color:var(--muted);
+    padding:9px 16px;border-radius:100px;
+    transition:all .25s ease;
+    font-weight:500;
+  }
+  .nav-links a:hover{color:var(--text);background:rgba(255,255,255,0.06);}
+  .nav-cta{
+    margin-left:6px;
+    background:var(--blue);
+    color:#fff !important;
+    padding:9px 18px;border-radius:100px;
+    font-size:0.85rem;font-weight:600;
+    transition:all .25s ease;
+    white-space:nowrap;
+  }
+  .nav-cta:hover{background:var(--blue-soft);transform:translateY(-1px);}
+  @media(max-width:820px){
+    .nav-links{display:none;}
+    nav{padding:8px;}
+    .nav-brand{margin-right:6px;padding-left:8px;}
+  }
+
+  section{position:relative;z-index:1;}
+
+  /* HERO */
+  .hero{
+    min-height:100vh;
+    display:grid;
+    grid-template-columns:1.05fr 0.95fr;
+    align-items:center;
+    max-width:1280px;
+    margin:0 auto;
+    padding:140px 48px 80px;
+    gap:40px;
+  }
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.78rem;color:var(--cyan);
+    border:1px solid rgba(111,230,255,0.25);
+    background:rgba(111,230,255,0.06);
+    padding:6px 14px;border-radius:100px;
+    margin-bottom:28px;
+    letter-spacing:0.02em;
+  }
+  .eyebrow::before{content:'●';font-size:0.6rem;color:var(--cyan);animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+  .hero h1{
+    font-size:clamp(2.6rem, 5.2vw, 4.4rem);
+    font-weight:700;
+    line-height:1.05;
+    letter-spacing:-0.02em;
+    margin-bottom:22px;
+  }
+  .hero h1 .accent{
+    background:linear-gradient(100deg, var(--blue) 10%, var(--cyan) 90%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .hero-role{
+    font-family:'IBM Plex Mono',monospace;
+    color:var(--muted);
+    font-size:1.05rem;
+    margin-bottom:24px;
+  }
+  .hero-role .cursor{
+    display:inline-block;width:2px;height:1.1em;background:var(--cyan);
+    vertical-align:text-bottom;margin-left:2px;
+    animation:blink 1s step-end infinite;
+  }
+  @keyframes blink{50%{opacity:0;}}
+
+  .hero p.lede{
+    max-width:480px;
+    color:var(--muted);
+    font-size:1.05rem;
+    margin-bottom:36px;
+  }
+  .hero-actions{display:flex;gap:14px;flex-wrap:wrap;}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:14px 26px;border-radius:12px;
+    font-weight:600;font-size:0.95rem;
+    transition:all .25s ease;
+    cursor:pointer;border:none;
+  }
+  .btn-primary{
+    background:var(--blue);color:#fff;
+    box-shadow:0 0 0 0 rgba(76,141,255,0.5);
+  }
+  .btn-primary:hover{background:var(--blue-soft);transform:translateY(-2px);box-shadow:0 8px 24px rgba(76,141,255,0.35);}
+  .btn-ghost{
+    background:transparent;color:var(--text);
+    border:1px solid var(--border-strong);
+  }
+  .btn-ghost:hover{background:rgba(255,255,255,0.06);border-color:var(--cyan);}
+
+  .hero-stats{
+    display:flex;gap:36px;margin-top:56px;
+    padding-top:28px;border-top:1px solid var(--border);
+    max-width:480px;
+  }
+  .hero-stats div b{
+    display:block;font-family:'Space Grotesk';font-size:1.5rem;font-weight:700;color:var(--text);
+  }
+  .hero-stats div span{font-size:0.8rem;color:var(--muted-dim);font-family:'IBM Plex Mono',monospace;}
+
+  /* 3D canvas stage */
+  .hero-stage{
+    position:relative;
+    height:560px;
+  }
+  #hero-canvas{
+    width:100%;height:100%;
+    cursor:grab;
+  }
+  #hero-canvas:active{cursor:grabbing;}
+  .stage-label{
+    position:absolute;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.72rem;
+    color:var(--muted);
+    background:rgba(13,21,38,0.75);
+    border:1px solid var(--border);
+    padding:5px 10px;border-radius:8px;
+    backdrop-filter:blur(6px);
+    pointer-events:none;
+    opacity:0;
+    transition:opacity .4s ease, transform .4s ease;
+  }
+  .stage-label.show{opacity:1;}
+
+  @media(max-width:960px){
+    .hero{grid-template-columns:1fr;padding:120px 24px 40px;}
+    .hero-stage{height:380px;order:-1;}
+    .hero-stats{gap:24px;}
+  }
+
+  /* Section shared */
+  .wrap{max-width:1120px;margin:0 auto;padding:0 48px;}
+  @media(max-width:820px){.wrap{padding:0 24px;}}
+  .section-pad{padding:120px 0;}
+  .section-head{margin-bottom:64px;max-width:640px;}
+  .section-tag{
+    font-family:'IBM Plex Mono',monospace;
+    color:var(--blue-soft);font-size:0.8rem;
+    letter-spacing:0.08em;text-transform:uppercase;
+    margin-bottom:14px;display:block;
+  }
+  .section-head h2{
+    font-size:clamp(1.9rem,3.4vw,2.6rem);
+    font-weight:700;letter-spacing:-0.01em;
+  }
+  .section-head p{color:var(--muted);margin-top:14px;font-size:1.02rem;}
+
+  /* ABOUT */
+  .about-grid{
+    display:grid;grid-template-columns:0.9fr 1.1fr;gap:64px;align-items:start;
+  }
+  @media(max-width:820px){.about-grid{grid-template-columns:1fr;gap:32px;}}
+  .code-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:28px 26px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.86rem;
+    line-height:1.85;
+    box-shadow:0 20px 50px rgba(0,0,0,0.3);
+    position:relative;
+    overflow:hidden;
+  }
+  .code-card::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:1px;
+    background:linear-gradient(90deg, transparent, var(--cyan), transparent);
+    opacity:0.5;
+  }
+  .code-card .cline{display:flex;gap:12px;}
+  .code-card .ln{color:var(--muted-dim);user-select:none;min-width:16px;text-align:right;}
+  .code-card .kw{color:#c792ea;}
+  .code-card .str{color:#7ee6b0;}
+  .code-card .prop{color:var(--cyan);}
+  .code-card .com{color:var(--muted-dim);}
+  .code-card .fn{color:var(--blue-soft);}
+
+  .about-text p{color:var(--muted);margin-bottom:18px;font-size:1.02rem;}
+  .about-text .highlight-row{
+    display:flex;gap:16px;margin-top:32px;flex-wrap:wrap;
+  }
+  .pill{
+    font-family:'IBM Plex Mono',monospace;font-size:0.78rem;
+    border:1px solid var(--border-strong);
+    padding:8px 14px;border-radius:10px;color:var(--text);
+    background:rgba(255,255,255,0.02);
+  }
+
+  /* SKILLS */
+  .skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  @media(max-width:820px){.skills-grid{grid-template-columns:1fr;}}
+  .skill-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:32px;
+  }
+  .skill-card h3{
+    font-size:1.05rem;margin-bottom:22px;
+    display:flex;align-items:center;gap:10px;
+    color:var(--text);
+  }
+  .skill-card h3 .tag-dot{width:8px;height:8px;border-radius:2px;background:var(--blue);}
+  .skill-row{margin-bottom:18px;}
+  .skill-row:last-child{margin-bottom:0;}
+  .skill-row .top{display:flex;justify-content:space-between;font-size:0.88rem;margin-bottom:8px;}
+  .skill-row .top span:first-child{color:var(--text);font-weight:500;}
+  .skill-row .top span:last-child{color:var(--muted-dim);font-family:'IBM Plex Mono',monospace;font-size:0.78rem;}
+  .bar-track{height:6px;background:rgba(255,255,255,0.06);border-radius:100px;overflow:hidden;}
+  .bar-fill{
+    height:100%;border-radius:100px;
+    background:linear-gradient(90deg, var(--blue), var(--cyan));
+    width:0%;
+    transition:width 1.4s cubic-bezier(.16,1,.3,1);
+  }
+  .soft-tags{display:flex;flex-wrap:wrap;gap:10px;}
+  .soft-tag{
+    font-size:0.85rem;padding:9px 15px;border-radius:10px;
+    background:rgba(255,255,255,0.03);
+    border:1px solid var(--border);
+    color:var(--muted);
+    transition:all .25s ease;
+  }
+  .soft-tag:hover{border-color:var(--cyan);color:var(--text);transform:translateY(-2px);}
+
+  /* EDUCATION timeline */
+  .timeline{position:relative;padding-left:36px;}
+  .timeline::before{
+    content:'';position:absolute;left:6px;top:6px;bottom:6px;width:1px;
+    background:linear-gradient(180deg, var(--blue), transparent);
+  }
+  .tl-item{position:relative;padding-bottom:44px;}
+  .tl-item:last-child{padding-bottom:0;}
+  .tl-item::before{
+    content:'';position:absolute;left:-36px;top:4px;
+    width:13px;height:13px;border-radius:50%;
+    background:var(--bg);border:2px solid var(--cyan);
+    box-shadow:0 0 0 4px rgba(111,230,255,0.1);
+  }
+  .tl-item .tl-tag{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--cyan);margin-bottom:6px;display:block;}
+  .tl-item h3{font-size:1.2rem;margin-bottom:6px;}
+  .tl-item .tl-sub{color:var(--muted-dim);font-size:0.9rem;margin-bottom:14px;}
+  .tl-tags{display:flex;flex-wrap:wrap;gap:8px;}
+  .tl-tags span{
+    font-size:0.78rem;padding:5px 12px;border-radius:8px;
+    background:var(--surface-2);color:var(--muted);
+    border:1px solid var(--border);
+  }
+
+  /* PROJECTS */
+  .projects-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;perspective:1200px;}
+  @media(max-width:960px){.projects-grid{grid-template-columns:1fr;}}
+  .project-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    overflow:hidden;
+    transform-style:preserve-3d;
+    transition:transform .12s ease, border-color .3s ease, box-shadow .3s ease;
+    will-change:transform;
+  }
+  .project-card:hover{
+    border-color:rgba(111,230,255,0.35);
+    box-shadow:0 24px 60px rgba(0,0,0,0.4);
+  }
+  .project-thumb{
+    height:150px;
+    position:relative;
+    background:
+      linear-gradient(135deg, rgba(76,141,255,0.18), rgba(111,230,255,0.08));
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;
+  }
+  .project-thumb::after{
+    content:'';position:absolute;inset:0;
+    background-image:linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size:20px 20px;
+  }
+  .project-thumb .glyph{
+    font-family:'Space Grotesk';font-weight:700;font-size:2.2rem;
+    color:rgba(255,255,255,0.18);z-index:1;
+  }
+  .project-body{padding:24px;}
+  .project-body .p-tag{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--muted-dim);margin-bottom:8px;display:block;}
+  .project-body h3{font-size:1.1rem;margin-bottom:10px;}
+  .project-body p{color:var(--muted);font-size:0.9rem;margin-bottom:20px;}
+  .project-link{
+    font-size:0.85rem;font-weight:600;color:var(--cyan);
+    display:inline-flex;align-items:center;gap:6px;
+  }
+  .project-link svg{transition:transform .2s ease;}
+  .project-card:hover .project-link svg{transform:translate(3px,-3px);}
+
+  /* CONTACT */
+  .contact-grid{
+    display:grid;grid-template-columns:0.85fr 1.15fr;gap:56px;
+  }
+  @media(max-width:820px){.contact-grid{grid-template-columns:1fr;gap:36px;}}
+  .contact-info-item{
+    display:flex;align-items:center;gap:16px;
+    padding:16px 0;border-bottom:1px solid var(--border);
+  }
+  .contact-info-item .ic{
+    width:40px;height:40px;border-radius:10px;
+    background:rgba(76,141,255,0.1);
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+    color:var(--blue-soft);
+  }
+  .contact-info-item .lbl{font-size:0.76rem;color:var(--muted-dim);font-family:'IBM Plex Mono',monospace;margin-bottom:2px;}
+  .contact-info-item .val{font-size:0.96rem;color:var(--text);}
+
+  .form-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:36px;
+  }
+  .field{margin-bottom:20px;}
+  .field label{
+    display:block;font-size:0.8rem;color:var(--muted);margin-bottom:8px;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .field input, .field textarea{
+    width:100%;
+    background:rgba(255,255,255,0.03);
+    border:1px solid var(--border-strong);
+    border-radius:10px;
+    padding:13px 16px;
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    font-size:0.94rem;
+    transition:border-color .25s ease, background .25s ease;
+  }
+  .field input:focus, .field textarea:focus{
+    outline:none;border-color:var(--cyan);background:rgba(255,255,255,0.05);
+  }
+  .field textarea{resize:vertical;min-height:110px;}
+  .submit-btn{width:100%;justify-content:center;}
+
+  footer{
+    border-top:1px solid var(--border);
+    padding:36px 0;
+  }
+  .footer-inner{
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
+    font-size:0.85rem;color:var(--muted-dim);
+  }
+  .footer-inner .mono{color:var(--muted);}
+
+  /* Reveal animation */
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease, transform .7s cubic-bezier(.16,1,.3,1);}
+  .reveal.in{opacity:1;transform:translateY(0);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important;transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
+
+<header>
+  <nav>
+    <div class="nav-brand"><span class="dot"></span>PK</div>
+    <ul class="nav-links">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#education">Education</a></li>
+      <li><a href="#projects">Projects</a></li>
+    </ul>
+    <a href="#contact" class="nav-cta">Contact Me</a>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section id="home" class="hero">
+  <div>
+    <span class="eyebrow">Available for internships, 2026</span>
+    <h1>Building things<br>for the <span class="accent">web,</span><br>one stack at a time.</h1>
+    <div class="hero-role">&gt; piyush.dev --role<span class="cursor"></span></div>
+    <p class="lede">I'm Piyush Kumar, a second-year BCA student learning to build modern, responsive websites — and slowly working my way toward becoming a full stack developer, one project at a time.</p>
+    <div class="hero-actions">
+      <a href="#skills" class="btn btn-primary">View Skills</a>
+      <a href="#contact" class="btn btn-ghost">Contact Me</a>
+    </div>
+    <div class="hero-stats">
+      <div><b>2nd</b><span>Year of BCA</span></div>
+      <div><b>5+</b><span>Technical Skills</span></div>
+      <div><b>Learning</b><span>Full Stack Development</span></div>
+    </div>
+  </div>
+
+  <div class="hero-stage">
+    <canvas id="hero-canvas"></canvas>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="section-pad">
+  <div class="wrap">
+    <div class="about-grid">
+      <div class="code-card reveal">
+        <div class="cline"><span class="ln">1</span><span><span class="kw">const</span> <span class="prop">developer</span> = {</span></div>
+        <div class="cline"><span class="ln">2</span><span>&nbsp;&nbsp;name: <span class="str">"Piyush Kumar"</span>,</span></div>
+        <div class="cline"><span class="ln">3</span><span>&nbsp;&nbsp;study: <span class="str">"BCA, Year 2"</span>,</span></div>
+        <div class="cline"><span class="ln">4</span><span>&nbsp;&nbsp;focus: [<span class="str">"web dev"</span>, <span class="str">"problem solving"</span>],</span></div>
+        <div class="cline"><span class="ln">5</span><span>&nbsp;&nbsp;<span class="com">// always learning something new</span></span></div>
+        <div class="cline"><span class="ln">6</span><span>&nbsp;&nbsp;<span class="fn">isLearning</span>: () =&gt; <span class="kw">true</span>,</span></div>
+        <div class="cline"><span class="ln">7</span><span>&nbsp;&nbsp;goal: <span class="str">"Full Stack Developer"</span></span></div>
+        <div class="cline"><span class="ln">8</span><span>};</span></div>
+      </div>
+
+      <div class="about-text reveal">
+        <span class="section-tag">About Me</span>
+        <h2 style="margin-bottom:20px;">The short version</h2>
+        <p>Hello! I am Piyush Kumar, a second-year Bachelor of Computer Applications (BCA) student at Noida International University with a strong interest in web development, programming, and technology.</p>
+        <p>I am currently learning HTML, CSS, JavaScript, C, Python, and web development, and I enjoy exploring modern web technologies to build responsive, user-friendly websites. I believe in continuous learning and always strive to improve my technical and problem-solving skills.</p>
+        <p>My goal is to become a skilled Full Stack Web Developer, and I am actively seeking internship opportunities to gain practical, real-world experience.</p>
+        <div class="highlight-row">
+          <span class="pill">Web Development</span>
+          <span class="pill">Database Management</span>
+          <span class="pill">Programming Fundamentals</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills" class="section-pad">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="section-tag">Skills</span>
+      <h2>What I work with</h2>
+      <p>A growing toolkit — some languages I'm confident in, others I'm actively sharpening.</p>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-card reveal">
+        <h3><span class="tag-dot"></span>Programming Languages</h3>
+        <div class="skill-row">
+          <div class="top"><span>HTML</span><span>Confident</span></div>
+          <div class="bar-track"><div class="bar-fill" data-w="90"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="top"><span>CSS</span><span>Confident</span></div>
+          <div class="bar-track"><div class="bar-fill" data-w="85"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="top"><span>JavaScript</span><span>Beginner</span></div>
+          <div class="bar-track"><div class="bar-fill" data-w="45"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="top"><span>C Programming</span><span>Learning</span></div>
+          <div class="bar-track"><div class="bar-fill" data-w="55"></div></div>
+        </div>
+        <div class="skill-row">
+          <div class="top"><span>Python</span><span>Learning</span></div>
+          <div class="bar-track"><div class="bar-fill" data-w="50"></div></div>
+        </div>
+      </div>
+
+      <div class="skill-card reveal">
+        <h3><span class="tag-dot"></span>Other Skills</h3>
+        <div class="soft-tags">
+          <span class="soft-tag">Responsive Web Design</span>
+          <span class="soft-tag">Git &amp; GitHub (Beginner)</span>
+          <span class="soft-tag">Problem Solving</span>
+          <span class="soft-tag">Teamwork</span>
+          <span class="soft-tag">Communication</span>
+          <span class="soft-tag">MS Office</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education" class="section-pad">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="section-tag">Education</span>
+      <h2>Academic path</h2>
+    </div>
+    <div class="timeline reveal">
+      <div class="tl-item">
+        <span class="tl-tag">2025 — Present</span>
+        <h3>Bachelor of Computer Applications (BCA)</h3>
+        <div class="tl-sub">Noida International University · Second Year</div>
+        <div class="tl-tags">
+          <span>Web Development</span>
+          <span>Database Management</span>
+          <span>Programming</span>
+          <span>Software Development Fundamentals</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects" class="section-pad">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="section-tag">Projects</span>
+      <h2>Things I've built</h2>
+      <p>I'm early in my journey and building toward my first real-world projects.</p>
+    </div>
+    <div class="projects-grid" style="grid-template-columns:1fr;">
+      <div class="project-card reveal">
+        <div class="project-thumb"><span class="glyph">✦</span></div>
+        <div class="project-body">
+          <span class="p-tag">In Progress</span>
+          <h3>Projects Coming Soon</h3>
+          <p>I am currently learning web development and building my skills through practice. I am actively working on real-world projects that will be added here soon. My goal is to create responsive, user-friendly websites and full-stack web applications.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="section-pad">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="section-tag">Contact</span>
+      <h2>Let's talk</h2>
+      <p>Open to internships, collaborations, and freelance web projects.</p>
+    </div>
+    <div class="contact-grid">
+      <div class="reveal">
+        <div class="contact-info-item">
+          <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z" opacity="0"/><path d="M22 6l-10 7L2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg></div>
+          <div><div class="lbl">Email</div><div class="val"><a href="mailto:pk8645604@gmail.com" style="color:inherit;">pk8645604@gmail.com</a></div></div>
+        </div>
+        <div class="contact-info-item">
+          <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>
+          <div><div class="lbl">Phone</div><div class="val"><a href="tel:+919341465683" style="color:inherit;">+91 9341465683</a></div></div>
+        </div>
+        <div class="contact-info-item">
+          <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></div>
+          <div><div class="lbl">LinkedIn</div><div class="val"><a href="https://www.linkedin.com/in/piyush9341" target="_blank" rel="noopener" style="color:inherit;">linkedin.com/in/piyush9341</a></div></div>
+        </div>
+        <div class="contact-info-item" style="border-bottom:none;">
+          <div class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg></div>
+          <div><div class="lbl">GitHub</div><div class="val"><a href="https://github.com/piyushkumar" target="_blank" rel="noopener" style="color:inherit;">github.com/piyushkumar</a></div></div>
+        </div>
+      </div>
+
+      <form id="contact-form" class="form-card reveal" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+        <div class="field">
+          <label>Name</label>
+          <input type="text" name="name" placeholder="Your full name" required>
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" name="email" placeholder="you@example.com" required>
+        </div>
+        <div class="field">
+          <label>Message</label>
+          <textarea name="message" placeholder="Tell me about the opportunity or project..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary submit-btn">Send Message</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-inner">
+    <span>© 2026 Piyush Kumar</span>
+    <span class="mono">Built with ❤️ using AI</span>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+  // ---------- Reveal on scroll ----------
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        if(e.target.classList.contains('skill-card')){
+          e.target.querySelectorAll('.bar-fill').forEach(b=>{
+            b.style.width = b.dataset.w + '%';
+          });
+        }
+        io.unobserve(e.target);
+      }
+    });
+  },{threshold:0.15});
+  revealEls.forEach(el=>io.observe(el));
+
+  // ---------- Contact form (Formspree) ----------
+  const contactForm = document.getElementById('contact-form');
+  if(contactForm){
+    contactForm.addEventListener('submit', async function(e){
+      e.preventDefault();
+      const btn = this.querySelector('.submit-btn');
+      const originalText = btn.textContent;
+      btn.textContent = 'Sending...';
+      try{
+        const res = await fetch(this.action, {
+          method: 'POST',
+          body: new FormData(this),
+          headers: { 'Accept': 'application/json' }
+        });
+        if(res.ok){
+          btn.textContent = 'Message Sent ✓';
+          this.reset();
+        } else {
+          btn.textContent = 'Something went wrong — try again';
+          setTimeout(()=>{ btn.textContent = originalText; }, 3000);
+        }
+      } catch(err){
+        btn.textContent = 'Something went wrong — try again';
+        setTimeout(()=>{ btn.textContent = originalText; }, 3000);
+      }
+    });
+  }
+
+  // ---------- Nav shrink on scroll ----------
+  let lastY = window.scrollY;
+  window.addEventListener('scroll', ()=>{
+    const nav = document.querySelector('header');
+    nav.style.transform = window.scrollY > 40 ? 'scale(0.98)' : 'scale(1)';
+  });
+
+  // ---------- Project card 3D tilt ----------
+  document.querySelectorAll('.project-card').forEach(card=>{
+    card.addEventListener('mousemove', (e)=>{
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      card.style.transform = `rotateY(${x*10}deg) rotateX(${-y*10}deg) translateZ(0)`;
+    });
+    card.addEventListener('mouseleave', ()=>{
+      card.style.transform = 'rotateY(0deg) rotateX(0deg)';
+    });
+  });
+
+  // ---------- 3D Hero: knowledge-graph core ----------
+  (function(){
+    const canvas = document.getElementById('hero-canvas');
+    const stage = canvas.parentElement;
+    let W = stage.clientWidth, H = stage.clientHeight;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, W/H, 0.1, 100);
+    camera.position.set(0, 0, 8);
+
+    const renderer = new THREE.WebGLRenderer({canvas, alpha:true, antialias:true});
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(W, H);
+
+    const group = new THREE.Group();
+    scene.add(group);
+
+    // Core icosahedron wireframe
+    const coreGeo = new THREE.IcosahedronGeometry(1.7, 1);
+    const coreMat = new THREE.MeshBasicMaterial({color:0x4c8dff, wireframe:true, transparent:true, opacity:0.55});
+    const core = new THREE.Mesh(coreGeo, coreMat);
+    group.add(core);
+
+    // inner solid glow sphere
+    const glowGeo = new THREE.IcosahedronGeometry(1.15, 1);
+    const glowMat = new THREE.MeshBasicMaterial({color:0x6fe6ff, transparent:true, opacity:0.08});
+    const glow = new THREE.Mesh(glowGeo, glowMat);
+    group.add(glow);
+
+    // Node points at vertex positions (stack layers)
+    const nodeLabels = ['Frontend','Backend','Database','UI/UX','Logic','Deploy'];
+    const positions = coreGeo.attributes.position;
+    const usedIdx = [];
+    const nodeCount = 6;
+    const step = Math.floor(positions.count/nodeCount);
+    const nodes = [];
+    for(let i=0;i<nodeCount;i++){
+      const idx = (i*step) % positions.count;
+      const v = new THREE.Vector3(positions.getX(idx), positions.getY(idx), positions.getZ(idx));
+      const nodeGeo = new THREE.SphereGeometry(0.06, 12, 12);
+      const nodeMat = new THREE.MeshBasicMaterial({color:0x6fe6ff});
+      const nodeMesh = new THREE.Mesh(nodeGeo, nodeMat);
+      nodeMesh.position.copy(v);
+      group.add(nodeMesh);
+      nodes.push({mesh:nodeMesh, label:nodeLabels[i]});
+    }
+
+    // Connecting lines between nodes (network feel)
+    for(let i=0;i<nodes.length;i++){
+      for(let j=i+1;j<nodes.length;j++){
+        if(Math.random() > 0.55) continue;
+        const lineGeo = new THREE.BufferGeometry().setFromPoints([nodes[i].mesh.position, nodes[j].mesh.position]);
+        const lineMat = new THREE.LineBasicMaterial({color:0x4c8dff, transparent:true, opacity:0.25});
+        group.add(new THREE.Line(lineGeo, lineMat));
+      }
+    }
+
+    // Ambient particle field
+    const particleGeo = new THREE.BufferGeometry();
+    const pCount = 220;
+    const pPos = new Float32Array(pCount*3);
+    for(let i=0;i<pCount;i++){
+      pPos[i*3] = (Math.random()-0.5)*14;
+      pPos[i*3+1] = (Math.random()-0.5)*14;
+      pPos[i*3+2] = (Math.random()-0.5)*8 - 2;
+    }
+    particleGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+    const particleMat = new THREE.PointsMaterial({color:0x8ba9ff, size:0.02, transparent:true, opacity:0.5});
+    const particles = new THREE.Points(particleGeo, particleMat);
+    scene.add(particles);
+
+    // labels overlay
+    const labelsEl = [];
+    nodes.forEach(n=>{
+      const el = document.createElement('div');
+      el.className = 'stage-label';
+      el.textContent = n.label;
+      stage.appendChild(el);
+      labelsEl.push({el, node:n});
+    });
+
+    let targetRotX = 0, targetRotY = 0;
+    let mouseInside = false;
+    stage.addEventListener('mousemove', (e)=>{
+      const r = stage.getBoundingClientRect();
+      const x = (e.clientX - r.left)/r.width - 0.5;
+      const y = (e.clientY - r.top)/r.height - 0.5;
+      targetRotY = x * 0.9;
+      targetRotX = -y * 0.6;
+      mouseInside = true;
+    });
+    stage.addEventListener('mouseleave', ()=>{ mouseInside = false; });
+
+    let autoAngle = 0;
+    const vec = new THREE.Vector3();
+
+    function animate(){
+      requestAnimationFrame(animate);
+      autoAngle += 0.0022;
+
+      group.rotation.y += ( (mouseInside ? targetRotY : autoAngle) - group.rotation.y ) * 0.05;
+      group.rotation.x += ( (mouseInside ? targetRotX : Math.sin(autoAngle)*0.15) - group.rotation.x ) * 0.05;
+
+      core.rotation.y -= 0.0015;
+      particles.rotation.y += 0.0004;
+
+      // project node labels to screen space
+      labelsEl.forEach(({el, node})=>{
+        vec.copy(node.mesh.position);
+        group.localToWorld(vec);
+        vec.project(camera);
+        const sx = (vec.x*0.5+0.5) * W;
+        const sy = (-vec.y*0.5+0.5) * H;
+        el.style.transform = `translate(${sx+10}px, ${sy-10}px)`;
+        el.classList.toggle('show', vec.z < 1);
+      });
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', ()=>{
+      W = stage.clientWidth; H = stage.clientHeight;
+      camera.aspect = W/H;
+      camera.updateProjectionMatrix();
+      renderer.setSize(W, H);
+    });
+  })();
+</script>
+</body>
+</html>
